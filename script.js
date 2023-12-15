@@ -40,17 +40,20 @@ getMoney
       return selectCurrency();
     },
     function () {
-      showAvaliableCurrency();
-      getAmountFromUser();
+      const selectedCurrency = showAvaliableCurrency();
+      const sum = getAmountFromUser();
+      const IsAvailable = checkAvailableBalance(sum, selectedCurrency);
+      IsAccess(IsAvailable, selectedCurrency, sum);
       return Promise.reject();
     }
   )
-  .then(
-    function (currency) {
-      showBalance(currency);
-    },
-    function () {}
-  );
+  .then(function (currency) {
+    showBalance(currency);
+  })
+  .finally(function () {
+    alert("Дякую, гарного дня 😊");
+  })
+  .catch(function () {});
 
 function isUserAgree() {
   return confirm("Подивитися баланс карті?");
@@ -121,22 +124,19 @@ function checkAvailableBalance(amount, currency) {
       IsMaxLimit = true;
     } else {
       alert(
-        "Доступна сума банку більша за доступну. Максимальна сума зняття: ",
-        bankData[currency]["max"]
+        `Доступна сума банку більша за доступну. Максимальна сума зняття: ${bankData[currency]["max"]}`
       );
     }
     if (amount >= bankData[currency]["min"]) {
       IsMinLimit = true;
     } else {
       alert(
-        "Мінімальна сума банку менша за доступну. Мінімальна сума зняття: ",
-        bankData[currency]["min"]
+        `Мінімальна сума банку менша за доступну. Мінімальна сума зняття: ${bankData[currency]["min"]}`
       );
     }
   } else {
     alert(
-      "Введена сума користувача більша за доступну. Максимальна сума зняття: ",
-      userData[currency]
+      `Введена сума користувача більша за доступну. Максимальна сума зняття: ${userData[currency]}`
     );
   }
 
@@ -148,4 +148,10 @@ function checkAvailableBalance(amount, currency) {
     return true;
   }
   return false;
+}
+
+function IsAccess(IsAvailable, currency, amount) {
+  IsAvailable
+    ? alert(`От Ваші гроші ${amount} ${currency} ${bankData[currency]["img"]}`)
+    : "";
 }
